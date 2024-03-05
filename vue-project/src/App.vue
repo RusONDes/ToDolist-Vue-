@@ -7,7 +7,7 @@
     </div>
   </div>
   <div class="Tabl">
-    <tab :tasks="tasks" :categories="categories" />
+    <tab :tasks="tasks" :categories="categories"  @itemDeleted="handleItemDeleted" @itemSaved = "handleItemSave" />
   </div>
 </template>
 
@@ -41,7 +41,7 @@ function saveData() {
 }
 
 var goop;
-var value_comp;
+
 var ari_text;
 
 function aria(value) {
@@ -69,6 +69,32 @@ function go() {
     done: false
   });
   saveData();
+}
+
+function handleItemDeleted(id) {
+  tasks.value = tasks.value.filter(task => task.id !== id);
+  saveData();
+}
+function handleItemSave(modifiedItem) {
+  const allCategories = JSON.parse(localStorage.getItem('categories'));
+  const indexa = allCategories.findIndex(category => category.id === modifiedItem.categoryId);
+
+  const allTasks = JSON.parse(localStorage.getItem('tasks'));
+
+  const index = allTasks.findIndex(task => task.id === modifiedItem.id);
+
+  if (index !== -1) {
+    
+    allTasks.splice(index, 1, modifiedItem);
+
+   
+    localStorage.setItem('tasks', JSON.stringify(allTasks));
+    allCategories[index].name = modifiedItem.name;
+    localStorage.setItem('categories', JSON.stringify(allCategories));
+  }
+
+ 
+  
 }
 </script>
 
